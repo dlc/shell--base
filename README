@@ -29,7 +29,6 @@ DESCRIPTION
           if ($line =~ /^...
 
   Features
-
     Shell::Base provides simple access to many of the things I always write
     into my REP's, as well as support for many thing that I always intend
     to, but never find time for:
@@ -40,8 +39,8 @@ DESCRIPTION
         integration with the history file features.
 
         If a subclass does want or need Term::ReadLine support, then it can
-        be replaced in subclasses by overriding a few methods. See the
-        section on "Using Shell::Base Without readline", below.
+        be replaced in subclasses by overriding a few methods. See "Using
+        Shell::Base Without readline", below.
 
     Trivial to add commands
         Adding commands to your shell is as simple as creating methods: the
@@ -109,8 +108,8 @@ METHODS
             "init_rl" initializes the Term::ReadLine instance. If a subclass
             does not intend to use Term::ReadLine, this method can be
             overridden. (There are other methods that need to be overridden
-            to eliminate readline completely; see the section on "Using
-            Shell::Base Without readline" for more details.)
+            to eliminate readline completely; see "Using Shell::Base Without
+            readline" for more details.)
 
             The completion method, "complete", is set here, though the list
             of possible completions is generated in the "init_completions"
@@ -118,19 +117,19 @@ METHODS
 
             If a HISTFILE parameter is passed to "init_rl", then the
             internal Term::ReadLine instance will attempt to use that file
-            for history functions. See the section on "History Functions" in
-            the Term::ReadLine::Gnu manpage for more details.
+            for history functions. See "History Functions" in
+            Term::ReadLine::Gnu for more details.
 
         init_rcfiles(\%args)
             "init_rcfiles" treats each element in the RCFILES array (passed
             into the contructor) as a configuration file, and attempts to
-            read and parse it. See the section on "RC Files", below.
+            read and parse it. See "RC Files", below.
 
         init_help(\%args)
             "init_help" generates the list of available help topics, which
             is all methods that match the pattern "^help_", by default. Once
             this list is generated, it is stored using the "helps" method
-            (see the section on "helps").
+            (see "helps").
 
         init_completions(\%args)
             "init_completions" creates the list of methods that are
@@ -140,7 +139,7 @@ METHODS
 
             The default completion method, "complete", chooses completions
             from this list based on the line and word being completed. See
-            the section on "complete".
+            "complete".
 
         init(\%args)
             A general purpose "init" method, designed to be overridden by
@@ -191,8 +190,8 @@ METHODS
 
               ($cmd, $env, @args) = $self->parseline($line);
 
-            See the section on "parseline" for details about "parseline",
-            and what $cmd, $env, and @args are.
+            See "parseline" for details about "parseline", and what $cmd,
+            $env, and @args are.
 
         o   Update environment variables with entries from %$env, for the
             command $cmd only.
@@ -204,7 +203,7 @@ METHODS
 
                   $output = $self->quit();
 
-                $RE_QUIT is "^(?i)\s*(quit|exit)" by default
+                $RE_QUIT is "^(?i)\s*(quit|exit|logout)" by default
 
             -   Otherwise, if $cmd matches $Shell::Base::RE_HELP, the method
                 "help" is invoked, with @args as parameters:
@@ -324,7 +323,7 @@ METHODS
               $self->SUPER::quit(@_);
           }
 
-        (See the Tie::File manpage for the appropriate details.)
+        (See Tie::File for the appropriate details.)
 
     readline
         The "readline" method is a wrapper for $self->term->readline; it is
@@ -553,9 +552,9 @@ METHODS
         Then $self->{ PROMPT_FMT } can be set to, for example, "%u@%h %w
         %%", which might yield a prompt like:
 
-          dlc@tumbleweed /tmp/Shell-Base %
+          darren@tumbleweed /tmp/Shell-Base %
 
-        (See the String::Format manpage for the appropriate details.)
+        (See String::Format for the appropriate details.)
 
         The value passed to "prompt" can be a code ref; if so, it is invoked
         with $self and any additional arguments passed to "prompt" as the
@@ -583,7 +582,6 @@ METHODS
         well.
 
   Methods That Add Commands
-
     Any command that run() doesn't recognize will be treated as a command; a
     method named "do_$command" will be invoked, in an eval block. Remember
     that a line is parsed into ($command, %env, @args); "do_$command" will
@@ -596,7 +594,7 @@ METHODS
 
       my $output = $self->$method(@args);
 
-    Remember, $output will be passed to $self->print() if it is defined.
+    $output will be passed to $self->print() if it is defined.
 
     Here is method that implements the "env" command:
 
@@ -631,7 +629,6 @@ METHODS
 
 MISCELLANEOUS
   Quick Imports
-
     If Shell::Base, or any Shell::Base subclass that does not does implement
     an "import" method, is invoked as:
 
@@ -651,7 +648,6 @@ MISCELLANEOUS
       $ perl -MMy::Shell=shell -e shell
 
   RC Files
-
     The rcfile parser is simple, and parses (name, value) tuples from config
     files, according to these rules:
 
@@ -696,7 +692,6 @@ MISCELLANEOUS
           %s
   
   Using Shell::Base Without readline
-
     The appropriate methods to override in this case are:
 
     init_rl
@@ -708,8 +703,8 @@ MISCELLANEOUS
 
     readline
         Returns the next line of input. Will be passed 1 argument, the
-        prompt to display. See the section on "readline" for an example of
-        overriding "readline".
+        prompt to display. See "readline" for an example of overriding
+        "readline".
 
     print
         Called with the data to be printed. By default, this method prints
@@ -721,7 +716,7 @@ MISCELLANEOUS
               CORE::print(@print_me);
           }
 
-        Another good example was given above, in the section on "pager":
+        Another good example was given above, in "pager":
 
           sub print {
               my ($self, @stuff) = @_;
@@ -763,14 +758,13 @@ TODO
         have yet to look at the code in any existing shells, I might be
         completely insane and totally on the wrong track. I therefore
         reserve the right to not implement this feature now, until I've
-        looked at how some "proper" shells (read: bash, ksh) implement
-        pipelines.
+        looked at how some proper shells implement pipelines.
 
 AUTHOR
     darren chamberlain <darren@cpan.org>
 
 REVISION
-    This documentation describes Shell::Base, version 0.02.
+    This documentation describes "Shell::Base", $Revision: 1.4 $.
 
 COPYRIGHT
     Copyright (C) 2003 darren chamberlain. All Rights Reserved.

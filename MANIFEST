@@ -2,7 +2,6 @@ Base.pm
 Changes
 Makefile.PL
 MANIFEST
-MANIFEST.SKIP
 README
 SIGNATURE
 t/args.t
@@ -19,13 +18,14 @@ t/misc.t
 t/new.t
 t/outro.t
 t/pager.t
-t/parseline.t
 t/parse_rcfile.t
+t/parseline.t
 t/pre,postcmd.t
 t/progname.t
-t/prompt_no.t
 t/prompt.t
+t/prompt_no.t
 t/shellrc
-t/skel
+t/signature.t
 t/term.t
 t/version.t
+META.yml                                 Module meta-data (added by MakeMaker)

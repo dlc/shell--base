@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.21.
+signed via the Module::Signature module, version 0.38.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -14,12 +14,12 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 c4f03f14cac58c94e1e412c4618567e0d0f75d70 Base.pm
-SHA1 6c9c519e59def6c59f1ea5c0d83bff4d45f53fe5 Changes
-SHA1 fae9bf09cf95685ea2fe7da8534531ab81ab5afd MANIFEST
-SHA1 62b595abfbb000b8c7254478aa2dcb455a73abb3 MANIFEST.SKIP
-SHA1 ddbc9967f03cc6b4649cb5b22349bca965530a47 Makefile.PL
-SHA1 e5f4877d8a2e7bd57b5d81f594bfd6f1a7fbf296 README
+SHA1 c941b31eea4980a6c9c77772ed7c9b686ef51d8a Base.pm
+SHA1 fd7a3bbc15b5e588bfbe5734d81e99e3369d001d Changes
+SHA1 6773da3ad1af9e5bc9e53ca83703018b54fefbb4 MANIFEST
+SHA1 c330e5c03d60d95c197e019f6d5a350b6642c3d6 META.yml
+SHA1 2520c012546c115e9fcdf07fcd1665860a504c7e Makefile.PL
+SHA1 60ecf66849df34dfdd37088cb3e93076573f6fc6 README
 SHA1 5535e11321a756f3d26a9e587c1b5dcec09ba4a1 t/args.t
 SHA1 71e7bc77032b0822edae3385a37387a5623713a1 t/default.t
 SHA1 5dda1f560b6547e68287d3ad3ab2c0ee95f12da1 t/histfile.t
@@ -41,14 +41,13 @@ SHA1 3d363020194359d832e14c17071b8963178fc47f t/progname.t
 SHA1 df2815fe5bd99b0e72a7dd4ba96a19cff470ec24 t/prompt.t
 SHA1 feb59423b8f0177be8e2a4bcd4a24bad6458a7f4 t/prompt_no.t
 SHA1 816e7fd045443b6337b25f57eb5b96e9d37c3630 t/shellrc
-SHA1 7b9f30660190b74c3f18239009b21502b0a56458 t/skel
+SHA1 f2ef34d69157884e7b0ff6ce689d327d12cdfc52 t/signature.t
 SHA1 721b34c29298c40cae698bdcbc8c77a16bc3637c t/term.t
 SHA1 66fbbebfa03b9b931f16a268a65d1674bbcfa83a t/version.t
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.2 (GNU/Linux)
-Comment: This message is digitally signed and can be verified for authenticity.
+Version: GnuPG v1.2.4 (GNU/Linux)
 
-iD8DBQE/HSyGzsinjrVhZaoRAm/FAJ0ZxlSOzzpb/d0ZNHbkeDFVZlGF1wCgkPCs
-lPJbJxWelwiX95sAyh3Xjfo=
-=xCH3
+iD8DBQFAdyRYzsinjrVhZaoRAiotAJ9FBcp0cQTM+1o8xErtZwWNNrenswCdGIxg
+W0j7DXUfV4Zb8+2uMkHA3es=
+=nZdx
 -----END PGP SIGNATURE-----

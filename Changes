@@ -1,11 +1,26 @@
 # ----------------------------------------------------------------------
 # Changelog for Shell::Base
 #
-# $Id: Changes,v 1.3 2003/11/20 16:41:20 dlc Exp $
+# $Id: Changes,v 1.4 2004/04/09 22:18:48 dlc Exp $
 # ----------------------------------------------------------------------
 
 # ----------------------------------------------------------------------
-# Version 0.03 - July 22, 2003
+# Version 0.04 - January 5, 2004
+# ----------------------------------------------------------------------
+* Cleaned up for CPAN release, including some documentation updates.
+
+* Added logout to $RE_QUIT regex, so that typing 'logout' ends the
+  interactive session.
+
+* Some simple newline cleanup before printing, at the top and bottom
+  of the run loop.
+
+* By default, if the 'help' command is invoked without an argument,
+  then display the, er, helpful help blurb that was removed in version
+  0.03.
+
+# ----------------------------------------------------------------------
+# Version 0.03 - July 22, 2003 (unreleased)
 # ----------------------------------------------------------------------
 * Added default command, which is executed when the asked for command
   doesn't exist.

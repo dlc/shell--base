@@ -2,7 +2,7 @@ package Shell::Base;
 
 # ----------------------------------------------------------------------
 # Shell::Base - A generic class to build line-oriented command interpreters.
-# $Id: Base.pm,v 1.3 2003/11/20 16:41:20 dlc Exp $
+# $Id: Base.pm,v 1.4 2004/04/09 22:18:47 dlc Exp $
 # ----------------------------------------------------------------------
 # Copyright (C) 2003 darren chamberlain <darren@cpan.org>
 #
@@ -22,11 +22,11 @@ use File::Basename qw(basename);
 use Term::Size qw(chars);
 use Text::Shellwords qw(shellwords);
 
-$VERSION      = 0.03;   # $Date: 2003/11/20 16:41:20 $
-$REVISION     = sprintf "%d.%02d", q$Revision: 1.3 $ =~ /(\d+)\.(\d+)/;
-$RE_QUIT      = '(?i)^\s*(exit|quit)' unless defined $RE_QUIT;
-$RE_HELP      = '(?i)^\s*(help|\?)'   unless defined $RE_HELP;
-$RE_SHEBANG   = '^\s*!\s*$'           unless defined $RE_SHEBANG;
+$VERSION      = 0.04;   # $Date: 2004/04/09 22:18:47 $
+$REVISION     = sprintf "%d.%02d", q$Revision: 1.4 $ =~ /(\d+)\.(\d+)/;
+$RE_QUIT      = '(?i)^\s*(exit|quit|logout)' unless defined $RE_QUIT;
+$RE_HELP      = '(?i)^\s*(help|\?)'          unless defined $RE_HELP;
+$RE_SHEBANG   = '^\s*!\s*$'                  unless defined $RE_SHEBANG;
 
 # ----------------------------------------------------------------------
 # import()
@@ -348,7 +348,11 @@ sub run {
     $prompt = $self->prompt;
     $blurb = $self->intro;
 
-    $self->print("$blurb\n") if defined $blurb;
+    
+    if (defined $blurb) {
+        chomp $blurb;
+        $self->print("$blurb\n");
+    }
 
     while (defined (my $line = $self->readline($prompt))) {
         my (@args, $cmd, $env, $output);
@@ -376,8 +380,10 @@ sub run {
                 $output = $self->$meth(@args);
             };
             if ($@) {
-                $output = sprintf "%s: Bad command or filename", $self->
-                warn "$output ($@)\n";
+                $output = sprintf "%s: Bad command or filename", $self->progname;
+                my $err = $@;
+                chomp $err;
+                warn "$output ($err)\n";
                 eval {
                     $output = $self->default($cmd, @args);
                 };
@@ -387,6 +393,7 @@ sub run {
         $output = $self->postcmd($output);
         $output =~ s/\n*$//;
 
+        chomp $output;
         $self->print("$output\n") if defined $output;
 
         # In case precmd or postcmd modified the prompt,
@@ -776,25 +783,25 @@ sub help {
         }
         else {
             push @ret,
-                "Sorry, no help available for $topic.";
+                "Sorry, no help available for `$topic'.";
         }
     }
 
-# XXX Thisias too verbose, and makes it too difficult to see
-# the actual help that the user requested.
-#    my @helps = $self->helps;
-#    if (@helps) {
-#        push @ret, 
-#            "Help is available for the following topics:",
-#            "===========================================",
-#            map({ "  * $_" } @helps),
-#            "===========================================";
-#    }
-#    else {
-#        my $me = $self->progname;
-#        push @ret, "No help available for $me.",
-#                   "Please complain to the author!";
-#    }
+    else {
+        my @helps = $self->helps;
+        if (@helps) {
+            push @ret, 
+                "Help is available for the following topics:",
+                "===========================================",
+                map({ "  * $_" } @helps),
+                "===========================================";
+        }
+        else {
+            my $me = $self->progname;
+            push @ret, "No help available for $me.",
+                    "Please complain to the author!";
+        }
+    }
 
     return join "\n", @ret;
 }
@@ -1149,7 +1156,7 @@ is invoked:
 
   $output = $self->quit();
 
-$RE_QUIT is C<^(?i)\s*(quit|exit)> by default
+$RE_QUIT is C<^(?i)\s*(quit|exit|logout)> by default
 
 =item -
 
@@ -1523,7 +1530,7 @@ something like C<String::Format>:
 Then $self->{ PROMPT_FMT } can be set to, for example, C<%u@%h %w %%>,
 which might yield a prompt like:
 
-  dlc@tumbleweed /tmp/Shell-Base %
+  darren@tumbleweed /tmp/Shell-Base %
 
 (See L<String::Format> for the appropriate details.)
 
@@ -1570,7 +1577,7 @@ include the contents of %env.  The effect is similar to:
 
   my $output = $self->$method(@args);
 
-Remember, $output will be passed to $self->print() if it is defined.
+$output will be passed to $self->print() if it is defined.
 
 Here is method that implements the C<env> command:
 
@@ -1760,7 +1767,7 @@ I have some ideas about how to implement pipelines, but, since I have
 yet to look at the code in any existing shells, I might be completely
 insane and totally on the wrong track.  I therefore reserve the right
 to not implement this feature now, until I've looked at how some
-"proper" shells (read: bash, ksh) implement pipelines.
+proper shells implement pipelines.
 
 =back
 
@@ -1770,7 +1777,7 @@ darren chamberlain E<lt>darren@cpan.orgE<gt>
 
 =head1 REVISION
 
-This documentation describes B<Shell::Base>, version 0.02.
+This documentation describes C<Shell::Base>, $Revision: 1.4 $.
 
 =head1 COPYRIGHT
 
