@@ -2,7 +2,7 @@ package Shell::Base;
 
 # ----------------------------------------------------------------------
 # Shell::Base - A generic class to build line-oriented command interpreters.
-# $Id: Base.pm,v 1.4 2004/04/09 22:18:47 dlc Exp $
+# $Id: Base.pm,v 1.5 2004/08/26 20:01:47 dlc Exp $
 # ----------------------------------------------------------------------
 # Copyright (C) 2003 darren chamberlain <darren@cpan.org>
 #
@@ -22,8 +22,8 @@ use File::Basename qw(basename);
 use Term::Size qw(chars);
 use Text::Shellwords qw(shellwords);
 
-$VERSION      = 0.04;   # $Date: 2004/04/09 22:18:47 $
-$REVISION     = sprintf "%d.%02d", q$Revision: 1.4 $ =~ /(\d+)\.(\d+)/;
+$VERSION      = 0.04;   # $Date: 2004/08/26 20:01:47 $
+$REVISION     = sprintf "%d.%02d", q$Revision: 1.5 $ =~ /(\d+)\.(\d+)/;
 $RE_QUIT      = '(?i)^\s*(exit|quit|logout)' unless defined $RE_QUIT;
 $RE_HELP      = '(?i)^\s*(help|\?)'          unless defined $RE_HELP;
 $RE_SHEBANG   = '^\s*!\s*$'                  unless defined $RE_SHEBANG;
@@ -1116,20 +1116,20 @@ worth noting:
 
 =over 4
 
-=item o
+=item *
 
 Reads a line of input using $self->readline(), passing the value of
 $self->prompt():
 
   $line = $self->readline($self->prompt);
 
-=item o 
+=item *
 
 Passes that line through $self->precmd(), for possible manipulation:
 
   $line = $self->precmd($line);
 
-=item o
+=item *
 
 Parses the line:
 
@@ -1138,18 +1138,18 @@ Parses the line:
 See L<"parseline"> for details about C<parseline>, and what $cmd,
 $env, and @args are.
 
-=item o
+=item *
 
 Update environment variables with entries from %$env, for the command
 $cmd only.
 
-=item o
+=item *
 
 Checks the contents of $cmd; there are a few special cases:
 
 =over 4
 
-=item -
+=item *
 
 If $cmd matches $Shell::Base::RE_QUIT, the method C<quit>
 is invoked:
@@ -1158,7 +1158,7 @@ is invoked:
 
 $RE_QUIT is C<^(?i)\s*(quit|exit|logout)> by default
 
-=item -
+=item *
 
 Otherwise, if $cmd matches $Shell::Base::RE_HELP, the method C<help>
 is invoked, with @args as parameters:
@@ -1167,7 +1167,7 @@ is invoked, with @args as parameters:
 
 $RE_HELP is C<^(?i)\s*(help|\?)> by default.
 
-=item -
+=item *
 
 Otherwise, if $cmd matches $Shell::Base::RE_SHEBANG, the method
 C<do_shell> is invoked, with @args as parameters:
@@ -1176,7 +1176,7 @@ C<do_shell> is invoked, with @args as parameters:
 
 $RE_SHEBANG is C<^\s*!\s*$> by default.
 
-=item -
+=item *
 
 Otherwise, the command C<do_$cmd> is invoked, with @args as
 parameters:
@@ -1186,13 +1186,13 @@ parameters:
 
 =back
 
-=item o
+=item *
 
 $output is passed to $self->postcmd() for postprocessing:
 
   $output = $self->postcmd($output);
 
-=item o
+=item *
 
 Finally, if $output is not C<undef>, it is passed to $self->print(),
 with a newline appended:
@@ -1777,7 +1777,7 @@ darren chamberlain E<lt>darren@cpan.orgE<gt>
 
 =head1 REVISION
 
-This documentation describes C<Shell::Base>, $Revision: 1.4 $.
+This documentation describes C<Shell::Base>, $Revision: 1.5 $.
 
 =head1 COPYRIGHT
 
