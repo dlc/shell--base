@@ -4,6 +4,7 @@ Makefile.PL
 MANIFEST
 README
 SIGNATURE
+doap.rdf
 t/args.t
 t/default.t
 t/histfile.t

@@ -2,7 +2,7 @@ package Shell::Base;
 
 # ----------------------------------------------------------------------
 # Shell::Base - A generic class to build line-oriented command interpreters.
-# $Id: Base.pm,v 1.5 2004/08/26 20:01:47 dlc Exp $
+# $Id: Base.pm,v 1.6 2004/09/28 13:33:32 dlc Exp $
 # ----------------------------------------------------------------------
 # Copyright (C) 2003 darren chamberlain <darren@cpan.org>
 #
@@ -22,8 +22,8 @@ use File::Basename qw(basename);
 use Term::Size qw(chars);
 use Text::Shellwords qw(shellwords);
 
-$VERSION      = 0.04;   # $Date: 2004/08/26 20:01:47 $
-$REVISION     = sprintf "%d.%02d", q$Revision: 1.5 $ =~ /(\d+)\.(\d+)/;
+$VERSION      = 0.05;   # $Date: 2004/09/28 13:33:32 $
+$REVISION     = sprintf "%d.%02d", q$Revision: 1.6 $ =~ /(\d+)\.(\d+)/;
 $RE_QUIT      = '(?i)^\s*(exit|quit|logout)' unless defined $RE_QUIT;
 $RE_HELP      = '(?i)^\s*(help|\?)'          unless defined $RE_HELP;
 $RE_SHEBANG   = '^\s*!\s*$'                  unless defined $RE_SHEBANG;
@@ -1777,7 +1777,7 @@ darren chamberlain E<lt>darren@cpan.orgE<gt>
 
 =head1 REVISION
 
-This documentation describes C<Shell::Base>, $Revision: 1.5 $.
+This documentation describes C<Shell::Base>, $Revision: 1.6 $.
 
 =head1 COPYRIGHT
 
