@@ -1,8 +1,10 @@
 Base.pm
+Changes
 Makefile.PL
 MANIFEST
 MANIFEST.SKIP
 README
+SIGNATURE
 t/args.t
 t/default.t
 t/histfile.t
@@ -18,6 +20,7 @@ t/new.t
 t/outro.t
 t/pager.t
 t/parseline.t
+t/parse_rcfile.t
 t/pre,postcmd.t
 t/progname.t
 t/prompt_no.t

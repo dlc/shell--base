@@ -3,44 +3,21 @@ use strict;
 use ExtUtils::MakeMaker;
 
 my %PREREQ_PM = (
-    'Carp'              => undef,
-    'Env'               => undef,
-    'IO::File'          => undef,
-    'Term::ReadLine'    => undef,
-    'Text::Shellwords'  => undef,
-    'Text::Wrap'        => undef,
+    'Carp'              => 0,
+    'Env'               => 0,
+    'IO::File'          => 0,
+    'Term::ReadLine'    => 0,
+    'Text::Shellwords'  => 0,
+    'Text::Wrap'        => 0,
 );
 
 my %clean = (
-    FILES => '$(DISTVNAME).tar$(SUFFIX) *.asc distdir',
-);
-
-my %macro = (
-    'GPG'    => 'gpg',
-    'AUTHOR' => 'darren@cpan.org',
-    'SIGN'   => '--detach-sign --armor',
+    FILES => '$(DISTVNAME).tar$(SUFFIX) distdir',
 );
 
 WriteMakefile(
     NAME         => "Shell::Base",
     VERSION_FROM => "Base.pm",
     PREREQ_PM    => \%PREREQ_PM,
-    macro        => \%macro,
     clean        => \%clean,
 );
-
-package MY;
-sub dist_dir {
-    my $self = shift;
-    my $stuff = $self->SUPER::dist_dir(@_);
-
-    return "$stuff\ttouch distdir\n\n";
-}
-
-sub postamble {
-    return <<'P';
-distsign :: $(DISTVNAME).tar$(SUFFIX)
-	$(GPG) $(SIGN) -u $(AUTHOR) $(DISTVNAME).tar$(SUFFIX)
-	@cat $(DISTVNAME).tar$(SUFFIX).asc
-P
-}

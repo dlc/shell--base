@@ -1,6 +1,8 @@
 #!/usr/bin/perl -w
 # vim: set ft=perl:
 
+# Tests generic init_rcfiles method; separate parse_rcfile tests
+
 use strict;
 
 use Test::More;

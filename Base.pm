@@ -2,7 +2,7 @@ package Shell::Base;
 
 # ----------------------------------------------------------------------
 # Shell::Base - A generic class to build line-oriented command interpreters.
-# $Id: Base.pm,v 1.1 2003/02/14 20:38:34 dlc Exp $
+# $Id: Base.pm,v 1.2 2003/03/20 17:08:47 dlc Exp $
 # ----------------------------------------------------------------------
 # Copyright (C) 2003 darren chamberlain <darren@cpan.org>
 #
@@ -22,7 +22,7 @@ use File::Basename qw(basename);
 use Text::Shellwords qw(shellwords);
 
 $VERSION      = 0.02;
-$REVISION     = sprintf "%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/;
+$REVISION     = sprintf "%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/;
 $RE_QUIT      = '(?i)^\s*(exit|quit)' unless defined $RE_QUIT;
 $RE_HELP      = '(?i)^\s*(help|\?)'   unless defined $RE_HELP;
 $RE_SHEBANG   = '^\s*!\s*$'           unless defined $RE_SHEBANG;
@@ -165,7 +165,6 @@ sub init_rl {
 sub init_rcfiles {
     my ($self, $args) = @_;
     my (@rcfiles, $rcfile);
-    my $config = $self->{ CONFIG };
 
     return unless defined $args->{ RCFILES };
 
@@ -176,43 +175,59 @@ sub init_rcfiles {
     @rcfiles = @{ $args->{ RCFILES } };
 
     for $rcfile (@rcfiles) {
-        my $buffer = "";
-        my $rc = IO::File->new($rcfile)
-            or next;
-
-        while (defined(my $line = <$rc>)) {
-            chomp $line;            
-            $line =~ s/#.*$//;
-
-            if (length $buffer && length $line) {
-                $line = $buffer . $line;
-            }
-
-            # Line continuation
-            if ($line =~ s/\\$//) {
-                $buffer = $line;
-                next;
-            } else {
-                $buffer = '';
-            }
-
-            next unless length $line;
-
-            my ($name, $value) = $line =~ /^\s*(.*?)\s*(?:=>?\s*(.*))?$/;
-            $name = lc $name;
-            unless (defined $value) {
-                if ($name =~ s/^no//) {
-                    $value = 0;
-                }
-                else {
-                    $value = 1;
-                }
-            }
-            $config->{ $name } = $value;
-        }
+        _merge_hash($self->{ CONFIG },
+             scalar $self->parse_rcfile($rcfile));
     }
 }
 
+# ----------------------------------------------------------------------
+# parse_rcfile($filename)
+#
+# Parses a config file, and returns a hash of config values.
+#
+# test: t/parse_rcfile.t
+# ----------------------------------------------------------------------
+sub parse_rcfile {
+    my ($self, $rcfile) = @_;
+    my %config = ();
+
+    my $buffer = "";
+    my $rc = IO::File->new($rcfile)
+        or next;
+
+    while (defined(my $line = <$rc>)) {
+        chomp $line;            
+        $line =~ s/#.*$//;
+
+        if (length $buffer && length $line) {
+            $line = $buffer . $line;
+        }
+
+        # Line continuation
+        if ($line =~ s/\\$//) {
+            $buffer = $line;
+            next;
+        } else {
+            $buffer = '';
+        }
+
+        next unless length $line;
+
+        my ($name, $value) = $line =~ /^\s*(.*?)\s*(?:=>?\s*(.*))?$/;
+        $name = lc $name;
+        unless (defined $value) {
+            if ($name =~ s/^no//) {
+                $value = 0;
+            }
+            else {
+                $value = 1;
+            }
+        }
+        $config{ $name } = $value;
+    }
+
+    return wantarray ? %config : \%config;
+}
 
 # ----------------------------------------------------------------------
 # init_help()
@@ -338,7 +353,6 @@ sub run {
         ($cmd, $env, @args) = $self->parseline($line);
         local %ENV = (%ENV, %$env);
 
-
         if (! length($cmd)) {
             $output = $self->emptycommand();
         }
@@ -357,13 +371,11 @@ sub run {
                 $output = $self->$meth(@args);
             };
             if ($@) {
+                $output = sprintf "%s: %s", $self->progname, $@;
                 $@ = undef;
-                eval {
-                    $output = $self->default($cmd, @args);
-                };
-            }
-            if ($@) {
-                carp "Can't do anything! $@";
+                #eval {
+                #    $output = $self->default($cmd, @args);
+                #};
             }
         }
 
@@ -612,7 +624,7 @@ sub parseline {
     while (@args) {
         if ($args[0] =~ /=/) {
             my ($n, $v) = split /=/, shift(@args), 2;
-            $env{$n} = $v;
+            $env{$n} = $v || "";
         }
         else {
             $cmd = shift @args;
@@ -690,17 +702,28 @@ sub histfile {
 
 
 # ----------------------------------------------------------------------
-# prompt([$prompt])
+# prompt([$prompt[, @args]])
 #
 # The prompt can be modified using this method.  For example, multiline
 # commands (which much be handled by the subclass) might modify the
-# prompt.  See, e.g., PS1 and PS2 in bash.
+# prompt, e.g., PS1 and PS2 in bash.  If $prompt is a coderef, it is
+# executed with $self and @args:
+#
+#   $self->{ PROMPT } = &$prompt($self, @args);
 #
 # Tests: t/prompt.t
 # ----------------------------------------------------------------------
 sub prompt {
     my $self = shift;
-    $self->{ PROMPT } = shift if @_;
+    if (@_) {
+        my $p = shift;
+        if (ref($p) eq 'CODE') {
+            $self->{ PROMPT } = &$p($self, @_);
+        }
+        else {
+            $self->{ PROMPT } = $p;
+        }
+    }
     return $self->{ PROMPT };
 }
 
@@ -730,7 +753,7 @@ sub pager {
 
 
 # ----------------------------------------------------------------------
-# help([$topic])
+# help([$topic[, @args]])
 #
 # Displays help. With $topic, it attempts to call $self->help_$topic,
 # which is expected to return a string.  Without $topic, it lists the
@@ -738,12 +761,12 @@ sub pager {
 # help_; these names are massaged with s/^help_// before being displayed.
 # ----------------------------------------------------------------------
 sub help {
-    my ($self, $topic) = @_;
+    my ($self, $topic, @args) = @_;
     my @ret;
 
     if ($topic) {
         if (my $sub = $self->can("help_$topic")) {
-            push @ret,  $self->$sub();
+            push @ret,  $self->$sub(@_);
         }
         else {
             push @ret,
@@ -860,6 +883,13 @@ sub do_warranty {
 'The entire risk as to the quality and performance of the program is ' .
 'with you.  Should the program prove defective, you assume the cost of ' .
 'all necessary servicing, repair or correction.', $self->progname);
+}
+
+# Helper function
+sub _merge_hash {
+    my ($merge_to, $merge_from) = @_;
+    $merge_to->{$_} = $merge_from->{$_}
+        for keys %$merge_from;
 }
 
 __END__
@@ -1489,6 +1519,18 @@ which might yield a prompt like:
 
 (See L<String::Format> for the appropriate details.)
 
+The value passed to C<prompt> can be a code ref; if so, it is invoked
+with $self and any additional arguments passed to C<prompt> as the
+arguments:
+
+    $self->prompt(\&func, @stuff);
+
+Will call:
+
+    &$func($self, @stuff);
+
+and use the return value as the prompt string.
+
 =item intro / outro
 
 Text that is displayed when control enters C<run> (C<intro>) and
@@ -1720,7 +1762,7 @@ darren chamberlain E<lt>darren@cpan.orgE<gt>
 
 =head1 REVISION
 
-$Revision: 1.1 $
+This documentation describes B<Shell::Base>, version 0.02.
 
 =head1 COPYRIGHT
 

@@ -1,5 +1,6 @@
 NAME
-    Shell::Base - A generic class to build line-oriented command interpreters.
+    Shell::Base - A generic class to build line-oriented command
+    interpreters.
 
 SYNOPSIS
       package My::Shell;
@@ -167,7 +168,11 @@ METHODS
           $shell->run();
 
         At the top of the loop, "run" prints the value of $self->intro, if
-        it is defined.
+        it is defined:
+
+          my $intro = $self->intro();
+          $self->print("$intro\n")
+              if defined $intro;
 
         "run" does several things for each iteration of the REP loop that
         are worth noting:
@@ -402,6 +407,15 @@ METHODS
               return $line;
           }
 
+        This would be a good place to handle things tilde-expansion:
+
+          sub precmd {
+              my ($self, $line) = @_;
+              $line =~ s{~([\w\d_-]*)}
+                        { $1 ? (getpwnam($1))[7] : $ENV{HOME} }e;
+              return $line;
+          }
+
     postcmd
         "postcmd" is called immediately before any output is printed.
         "postcmd" will be passed a scalar containing the output of whatever
@@ -419,16 +433,16 @@ METHODS
         You can do fun output filtering here:
 
           use Text::Bastardize;
+          my $bastard = Text::Bastardize->new;
           sub postcmd {
               my ($self, $output) = @_;
-              my $bastard = Text::Bastardize->new;
 
               $bastard->charge($output);
 
               return $bastard->k3wlt0k()
           }
 
-        Or even translation:
+        Or translation:
 
           use Text::Iconv;
           my $converter;
@@ -448,6 +462,15 @@ METHODS
 
               # Fall back to unconverted output, not croak
               return $completer->convert($output) || $output;
+          }
+
+        Or put the tildes back in:
+
+          sub postcmd {
+              my ($self, $line) = @_;
+              $line =~ s{(/home/([^/ ]+))}
+                        { -d $1 ? "~$2" : $1 }ge;
+              return $line;
           }
 
     pager
@@ -507,13 +530,13 @@ METHODS
           use Cwd;
           use File::Basename qw(basename);
           use Net::Domain qw(hostfqdn);
-          use String::Format;
+          use String::Format qw(stringf);
           use Sys::Hostname qw(hostname);
 
           sub prompt {
               my $self = shift;
               my $fmt = $self->{ PROMPT_FMT };
-              stringf $fmt => {
+              return stringf $fmt => {
                   '$' => $$,
                   'w' => cwd,
                   'W' => basename(cwd),
@@ -672,14 +695,14 @@ MISCELLANEOUS
         methods listed in this section.
 
     readline
-        Returns the next line of input. Will be passed 1 arguments, the
+        Returns the next line of input. Will be passed 1 argument, the
         prompt to display. See the section on "readline" for an example of
         overriding "readline".
 
     print
         Called with the data to be printed. By default, this method prints
         to $self->term->OUT, but subclasses that aren't using Term::ReadLine
-        will want to provide a usseful alternative. One possibily might be:
+        will want to provide a useful alternative. One possibily might be:
 
           sub print {
               my ($self, @print_me) = @_;
@@ -731,9 +754,15 @@ TODO
         looked at how some "proper" shells (read: bash, ksh) implement
         pipelines.
 
-VERSION
-    This document describes version 0.01 of "Shell::Base".
-
 AUTHOR
     darren chamberlain <darren@cpan.org>
+
+REVISION
+    $Revision: 1.2 $
+
+COPYRIGHT
+    Copyright (C) 2003 darren chamberlain. All Rights Reserved.
+
+    This module is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
 
