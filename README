@@ -557,6 +557,18 @@ METHODS
 
         (See the String::Format manpage for the appropriate details.)
 
+        The value passed to "prompt" can be a code ref; if so, it is invoked
+        with $self and any additional arguments passed to "prompt" as the
+        arguments:
+
+            $self->prompt(\&func, @stuff);
+
+        Will call:
+
+            &$func($self, @stuff);
+
+        and use the return value as the prompt string.
+
     intro / outro
         Text that is displayed when control enters "run" ("intro") and
         "quit" ("outro"). If the method returns a non-undef result, it will
@@ -758,7 +770,7 @@ AUTHOR
     darren chamberlain <darren@cpan.org>
 
 REVISION
-    $Revision: 1.2 $
+    This documentation describes Shell::Base, version 0.02.
 
 COPYRIGHT
     Copyright (C) 2003 darren chamberlain. All Rights Reserved.

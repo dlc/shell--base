@@ -2,7 +2,7 @@ package Shell::Base;
 
 # ----------------------------------------------------------------------
 # Shell::Base - A generic class to build line-oriented command interpreters.
-# $Id: Base.pm,v 1.2 2003/03/20 17:08:47 dlc Exp $
+# $Id: Base.pm,v 1.3 2003/11/20 16:41:20 dlc Exp $
 # ----------------------------------------------------------------------
 # Copyright (C) 2003 darren chamberlain <darren@cpan.org>
 #
@@ -19,10 +19,11 @@ use Carp qw(carp croak);
 use Env qw($PAGER $SHELL $COLUMNS);
 use IO::File;
 use File::Basename qw(basename);
+use Term::Size qw(chars);
 use Text::Shellwords qw(shellwords);
 
-$VERSION      = 0.02;
-$REVISION     = sprintf "%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/;
+$VERSION      = 0.03;   # $Date: 2003/11/20 16:41:20 $
+$REVISION     = sprintf "%d.%02d", q$Revision: 1.3 $ =~ /(\d+)\.(\d+)/;
 $RE_QUIT      = '(?i)^\s*(exit|quit)' unless defined $RE_QUIT;
 $RE_HELP      = '(?i)^\s*(help|\?)'   unless defined $RE_HELP;
 $RE_SHEBANG   = '^\s*!\s*$'           unless defined $RE_SHEBANG;
@@ -104,6 +105,7 @@ sub new {
     my $class = shift;
     my $args  = UNIVERSAL::isa($_[0], 'HASH') ? shift : { @_ };
 
+    my @size = chars();
     my $self  = bless {
         ARGS        => $args,
         COMPLETIONS => undef,           # tab completion
@@ -113,6 +115,9 @@ sub new {
         PAGER       => undef,           # pager
         PROMPT      => $PROMPT,         # default prompt
         TERM        => undef,           # Term::ReadLine instance
+        SIZE        => \@size,          # Terminal size
+        COLUMNS     => $size[0],
+        ROWS        => $size[1],
     } => $class;
 
     $self->init_rl($args);
@@ -371,15 +376,16 @@ sub run {
                 $output = $self->$meth(@args);
             };
             if ($@) {
-                $output = sprintf "%s: %s", $self->progname, $@;
-                $@ = undef;
-                #eval {
-                #    $output = $self->default($cmd, @args);
-                #};
+                $output = sprintf "%s: Bad command or filename", $self->
+                warn "$output ($@)\n";
+                eval {
+                    $output = $self->default($cmd, @args);
+                };
             }
         }
 
         $output = $self->postcmd($output);
+        $output =~ s/\n*$//;
 
         $self->print("$output\n") if defined $output;
 
@@ -520,7 +526,7 @@ sub prompt_no {
 # Returns the version number.
 # ----------------------------------------------------------------------
 sub version {
-    return $VERSION
+    return $VERSION;
 }
 
 # ----------------------------------------------------------------------
@@ -774,19 +780,21 @@ sub help {
         }
     }
 
-    my @helps = $self->helps;
-    if (@helps) {
-        push @ret, 
-            "Help is available for the following topics:",
-            "===========================================",
-            map({ "  * $_" } @helps),
-            "===========================================";
-    }
-    else {
-        my $me = $self->progname;
-        push @ret, "No help available for $me.",
-                   "Please complain to the author!";
-    }
+# XXX Thisias too verbose, and makes it too difficult to see
+# the actual help that the user requested.
+#    my @helps = $self->helps;
+#    if (@helps) {
+#        push @ret, 
+#            "Help is available for the following topics:",
+#            "===========================================",
+#            map({ "  * $_" } @helps),
+#            "===========================================";
+#    }
+#    else {
+#        my $me = $self->progname;
+#        push @ret, "No help available for $me.",
+#                   "Please complain to the author!";
+#    }
 
     return join "\n", @ret;
 }

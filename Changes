@@ -1,23 +1,30 @@
 # ----------------------------------------------------------------------
 # Changelog for Shell::Base
 #
-# $Id: Changes,v 1.2 2003/03/20 17:08:48 dlc Exp $
+# $Id: Changes,v 1.3 2003/11/20 16:41:20 dlc Exp $
 # ----------------------------------------------------------------------
 
 # ----------------------------------------------------------------------
-# Version 0.02 - February 11, 2003
+# Version 0.03 - July 22, 2003
 # ----------------------------------------------------------------------
+* Added default command, which is executed when the asked for command
+  doesn't exist.
 
-  * Added documented but missing emptycommand method, invoked when a
-    user issues a whitespace-only command.
+* Removed the default help blurb, to keep from cluttering the help
+  output.
 
-  * Documentation updates and clarifications
+# ----------------------------------------------------------------------
+# Version 0.02 - February 11, 2003 (unreleased)
+# ----------------------------------------------------------------------
+* Added documented but missing emptycommand method, invoked when a
+  user issues a whitespace-only command.
 
-  * Updated t/import.t with tests for inherited import().
+* Documentation updates and clarifications
+
+* Updated t/import.t with tests for inherited import().
 
 # ----------------------------------------------------------------------
 # Version 0.01 - January 22, 2003
 # ----------------------------------------------------------------------
-
-  * Initial release
+* Initial release
 
