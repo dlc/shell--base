@@ -1,0 +1,23 @@
+# ----------------------------------------------------------------------
+# Changelog for Shell::Base
+#
+# $Id: Changes,v 1.1 2003/02/14 20:38:34 dlc Exp $
+# ----------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------
+# Version 0.01 - January 22, 2003
+# ----------------------------------------------------------------------
+
+  * Initial release
+
+# ----------------------------------------------------------------------
+# Version 0.02 - February 11, 2003
+# ----------------------------------------------------------------------
+
+  * Added documented but missing emptycommand method, invoked when a
+    user issues a whitespace-only command.
+
+  * Documentation updates and clarifications
+
+  * Updated t/import.t with tests for inherited import().
