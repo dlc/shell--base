@@ -176,60 +176,60 @@ METHODS
         "run" does several things for each iteration of the REP loop that
         are worth noting:
 
-        o   Reads a line of input using $self->readline(), passing the value
+        *   Reads a line of input using $self->readline(), passing the value
             of $self->prompt():
 
               $line = $self->readline($self->prompt);
 
-        o   Passes that line through $self->precmd(), for possible
+        *   Passes that line through $self->precmd(), for possible
             manipulation:
 
               $line = $self->precmd($line);
 
-        o   Parses the line:
+        *   Parses the line:
 
               ($cmd, $env, @args) = $self->parseline($line);
 
             See "parseline" for details about "parseline", and what $cmd,
             $env, and @args are.
 
-        o   Update environment variables with entries from %$env, for the
+        *   Update environment variables with entries from %$env, for the
             command $cmd only.
 
-        o   Checks the contents of $cmd; there are a few special cases:
+        *   Checks the contents of $cmd; there are a few special cases:
 
-            -   If $cmd matches $Shell::Base::RE_QUIT, the method "quit" is
+            *   If $cmd matches $Shell::Base::RE_QUIT, the method "quit" is
                 invoked:
 
                   $output = $self->quit();
 
                 $RE_QUIT is "^(?i)\s*(quit|exit|logout)" by default
 
-            -   Otherwise, if $cmd matches $Shell::Base::RE_HELP, the method
+            *   Otherwise, if $cmd matches $Shell::Base::RE_HELP, the method
                 "help" is invoked, with @args as parameters:
 
                   $output = $self->help(@args);
 
                 $RE_HELP is "^(?i)\s*(help|\?)" by default.
 
-            -   Otherwise, if $cmd matches $Shell::Base::RE_SHEBANG, the
+            *   Otherwise, if $cmd matches $Shell::Base::RE_SHEBANG, the
                 method "do_shell" is invoked, with @args as parameters:
 
                   $output = $self->do_shell(@args);
 
                 $RE_SHEBANG is "^\s*!\s*$" by default.
 
-            -   Otherwise, the command "do_$cmd" is invoked, with @args as
+            *   Otherwise, the command "do_$cmd" is invoked, with @args as
                 parameters:
 
                   my $method = "do_$cmd";
                   $output = $self->$method(@args);
 
-        o   $output is passed to $self->postcmd() for postprocessing:
+        *   $output is passed to $self->postcmd() for postprocessing:
 
               $output = $self->postcmd($output);
 
-        o   Finally, if $output is not "undef", it is passed to
+        *   Finally, if $output is not "undef", it is passed to
             $self->print(), with a newline appended:
 
               $self->print("$output\n")
@@ -764,7 +764,7 @@ AUTHOR
     darren chamberlain <darren@cpan.org>
 
 REVISION
-    This documentation describes "Shell::Base", $Revision: 1.4 $.
+    This documentation describes "Shell::Base", $Revision: 1.5 $.
 
 COPYRIGHT
     Copyright (C) 2003 darren chamberlain. All Rights Reserved.

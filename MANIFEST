@@ -25,7 +25,6 @@ t/progname.t
 t/prompt.t
 t/prompt_no.t
 t/shellrc
-t/signature.t
 t/term.t
 t/version.t
 META.yml                                 Module meta-data (added by MakeMaker)
