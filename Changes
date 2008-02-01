@@ -1,8 +1,22 @@
 # ----------------------------------------------------------------------
 # Changelog for Shell::Base
 #
-# $Id: Changes,v 1.6 2004/09/28 13:33:32 dlc Exp $
+# $Id: Changes,v 1.7 2008/02/01 02:34:52 dlc Exp $
 # ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+# Version 0.06                                          January 31, 2008
+# ----------------------------------------------------------------------
+
+* dependency on Term::Size replaced by Term::Size::Any (which works at
+  Unix and Windows), courtesy of Adriano Ferreira <a.r.ferreira@gmail.com>.
+
+* removed the gnu-isms of code, allowing other Term::ReadLine::*
+  packages to be used (if they support GetHistory and SetHistory),
+  courtesy of Adriano Ferreira <a.r.ferreira@gmail.com>.
+
+* added a dependency on File::Slurp for reading/writing history files,
+  courtesy of Adriano Ferreira <a.r.ferreira@gmail.com>.
 
 # ----------------------------------------------------------------------
 # Version 0.05                                        September 21, 2004 

@@ -1,7 +1,7 @@
 use strict;
 
 # ----------------------------------------------------------------------
-# $Id: Makefile.PL,v 1.5 2004/09/28 13:33:32 dlc Exp $
+# $Id: Makefile.PL,v 1.6 2008/02/01 02:34:52 dlc Exp $
 # ----------------------------------------------------------------------
 # Makefile.PL for Shell::Base
 # ----------------------------------------------------------------------
@@ -13,9 +13,10 @@ my %PREREQ_PM = (
     'Env'               => 0,
     'IO::File'          => 0,
     'Term::ReadLine'    => 0,
-    'Term::Size'        => 0.2,
+    'Term::Size::Any'   => 0,
     'Text::Shellwords'  => 0,
     'Text::Wrap'        => 0,
+    'File::Slurp'       => 0, # needed only with T::RL::Perl
 );
 
 my %clean = (

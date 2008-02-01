@@ -23,7 +23,8 @@ is(ref $sh->term->Attribs->{completion_function},
 # If history is enabled, then the history_length attribute will
 # be set.
 
-is($sh->term->{'history_length'}, wc($histfile), 
+my $history_length = $sh->term->GetHistory;
+is($history_length, wc($histfile), 
     "history file was loaded correctly");
 
 sub wc {

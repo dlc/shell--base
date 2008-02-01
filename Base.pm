@@ -2,7 +2,7 @@ package Shell::Base;
 
 # ----------------------------------------------------------------------
 # Shell::Base - A generic class to build line-oriented command interpreters.
-# $Id: Base.pm,v 1.6 2004/09/28 13:33:32 dlc Exp $
+# $Id: Base.pm,v 1.7 2008/02/01 02:34:52 dlc Exp $
 # ----------------------------------------------------------------------
 # Copyright (C) 2003 darren chamberlain <darren@cpan.org>
 #
@@ -19,11 +19,11 @@ use Carp qw(carp croak);
 use Env qw($PAGER $SHELL $COLUMNS);
 use IO::File;
 use File::Basename qw(basename);
-use Term::Size qw(chars);
+use Term::Size::Any qw(chars);
 use Text::Shellwords qw(shellwords);
 
-$VERSION      = 0.05;   # $Date: 2004/09/28 13:33:32 $
-$REVISION     = sprintf "%d.%02d", q$Revision: 1.6 $ =~ /(\d+)\.(\d+)/;
+$VERSION      = 0.05;   # $Date: 2008/02/01 02:34:52 $
+$REVISION     = sprintf "%d.%02d", q$Revision: 1.7 $ =~ /(\d+)\.(\d+)/;
 $RE_QUIT      = '(?i)^\s*(exit|quit|logout)' unless defined $RE_QUIT;
 $RE_HELP      = '(?i)^\s*(help|\?)'          unless defined $RE_HELP;
 $RE_SHEBANG   = '^\s*!\s*$'                  unless defined $RE_SHEBANG;
@@ -130,6 +130,56 @@ sub new {
 }
 
 # ----------------------------------------------------------------------
+# _read_history($histfile)
+#
+# Adds the content of $histfile to the history list 
+# of the Term::ReadLine instance.
+#
+# For Term::ReadLine::Gnu, it only delegates to ReadHistory()
+# method.
+#
+# For other Term::ReadLine::* which support SetHistory(),
+# the file is read and the history set in this method.
+#
+# ----------------------------------------------------------------------
+sub _read_history {
+    my ($self, $h) = @_;
+    if ( $self->term->can('ReadHistory') ) { # T::RL::Gnu does
+        $self->term->ReadHistory($h);
+    } else {
+        if ( -e $h ) {
+            require File::Slurp;
+            my @h = File::Slurp::read_file($h);
+            $self->term->SetHistory(@h);
+        }
+    }
+}
+
+# ----------------------------------------------------------------------
+# _write_history($histfile)
+#
+# Writes the current history to $histfile.
+#
+# For Term::ReadLine::Gnu, it only delegates to WriteHistory()
+# method.
+#
+# For other Term::ReadLine::* which support GetHistory(),
+# the history is got and the writing is done in this method.
+#
+# ----------------------------------------------------------------------
+sub _write_history {
+    my ($self, $h) = @_;
+    if ( $self->term->can('WriteHistory') ) { # T::RL::Gnu does
+        $self->term->WriteHistory($h);
+    } else {
+        require File::Slurp;
+        my @h = $self->term->GetHistory();
+        File::Slurp::write_file($h, @h);
+    }
+}
+
+
+# ----------------------------------------------------------------------
 # init_rl(\%args)
 #
 # Initialize Term::ReadLine.  Subclasses can override this method if
@@ -150,7 +200,7 @@ sub init_rl {
 
     if (my $histfile = $args->{ HISTFILE }) {
         $self->histfile($histfile);
-        $term->ReadHistory($histfile);
+        $self->_read_history($histfile);
     }
 
     return $self;
@@ -451,7 +501,7 @@ sub quit {
 
     if (my $h = $self->histfile) {
         # XXX Can this be better encapsulated?
-        $self->term->WriteHistory($h);
+        $self->_write_history($h);
     }
 
     exit($status);
@@ -519,7 +569,7 @@ sub emptycommand {
 # ----------------------------------------------------------------------
 sub prompt_no {
     my $self = shift;
-    return $self->term->where_history();
+    return scalar $self->term->GetHistory();
 }
 
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -1777,7 +1827,7 @@ darren chamberlain E<lt>darren@cpan.orgE<gt>
 
 =head1 REVISION
 
-This documentation describes C<Shell::Base>, $Revision: 1.6 $.
+This documentation describes C<Shell::Base>, $Revision: 1.7 $.
 
 =head1 COPYRIGHT
 
